@@ -1,0 +1,19 @@
+QCheckBox
+{
+    
+}
+
+.status[state = "OFF"]
+{
+    background-color: crimson;
+    color:black;
+    text-align: center;
+}
+
+.status[state = "ON"]
+{
+    background-color:chartreuse;
+    color:black;
+    text-align: center;
+}
+
