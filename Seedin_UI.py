@@ -90,30 +90,26 @@ class UserControlWidget(QWidget):
         self.CheckBoxList = []
         index = 0
         try: 
-            with open("directory.seedin") as f:
+            with open("log/directory.seedin") as f:
                 raw_data = f.readlines()
                 
                 for name in raw_data:
-                    # print(name, index//4 , index%4)
-                    c = QCheckBox(name[1:],self)
+                    c = QCheckBox(name[1:-1],self)
                     self.Layout.addWidget(c,index//4,index%4)
                     self.CheckBoxList.append(c)
                     index += 1
         except Exception as e:
-            print(e.args)
-
-
-        
-        # self.Layout.addWidget(self.ChineseBox,0,0)
-        # self.Layout.addWidget(self.EnglishBox,0,1)
-        # self.Layout.addWidget(self.MathBox,0,2)
-        # self.Layout.addWidget(self.OthersBox,0,3)
-
-        
+            print(e.args)        
         
         self.add_button = QPushButton("add Subject", self)
+        self.add_button.clicked.connect(self._AddSubject)
         self.Layout.addWidget(self.add_button,index//4+1,0,1,2)
         self.setLayout(self.Layout)
+
+    def _AddSubject(self):
+        for button in self.CheckBoxList:
+            if (button.isChecked()):
+                print(button.text())
 
 class CenterWidget(QWidget):
     def __init__(self):
