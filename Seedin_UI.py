@@ -80,19 +80,39 @@ class UserControlWidget(QWidget):
         self.init_UI()
     
     def init_UI(self):
-        self.ChineseBox = QCheckBox("Chinese",self)
-        self.EnglishBox = QCheckBox("English",self)
-        self.MathBox = QCheckBox("Math",self)
-        self.OthersBox = QCheckBox("Other",self)
-
+        
         self.Layout = QGridLayout(self)
-        self.Layout.addWidget(self.ChineseBox,0,0)
-        self.Layout.addWidget(self.EnglishBox,0,1)
-        self.Layout.addWidget(self.MathBox,0,2)
-        self.Layout.addWidget(self.OthersBox,0,3)
+        # self.ChineseBox = QCheckBox("Chinese",self)
+        # self.EnglishBox = QCheckBox("English",self)
+        # self.MathBox = QCheckBox("Math",self)
+        # self.OthersBox = QCheckBox("Other",self)
+
+        self.CheckBoxList = []
+        index = 0
+        try: 
+            with open("directory.seedin") as f:
+                raw_data = f.readlines()
+                
+                for name in raw_data:
+                    # print(name, index//4 , index%4)
+                    c = QCheckBox(name[1:],self)
+                    self.Layout.addWidget(c,index//4,index%4)
+                    self.CheckBoxList.append(c)
+                    index += 1
+        except Exception as e:
+            print(e.args)
+
+
+        
+        # self.Layout.addWidget(self.ChineseBox,0,0)
+        # self.Layout.addWidget(self.EnglishBox,0,1)
+        # self.Layout.addWidget(self.MathBox,0,2)
+        # self.Layout.addWidget(self.OthersBox,0,3)
+
+        
         
         self.add_button = QPushButton("add Subject", self)
-        self.Layout.addWidget(self.add_button,1,0,1,2)
+        self.Layout.addWidget(self.add_button,index//4+1,0,1,2)
         self.setLayout(self.Layout)
 
 class CenterWidget(QWidget):
