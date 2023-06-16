@@ -12,35 +12,43 @@ from webdriver_manager.chrome import ChromeDriverManager
 BASE_URL = "https://web.whatsapp.com/"
 CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&app_absent=1"
 
-chrome_options = Options()
-chrome_options.add_argument("start-maximized")
-user_data_dir = ''.join(random.choices(string.ascii_letters, k=8))
-chrome_options.add_argument("--user-data-dir=/tmp/chrome-data/" + user_data_dir)
-chrome_options.add_argument("--incognito")
+def main():
+    chrome_options = Options()
+    chrome_options.add_argument("start-maximized")
+    user_data_dir = ''.join(random.choices(string.ascii_letters, k=8))
+    chrome_options.add_argument("--user-data-dir=/tmp/chrome-data/" + user_data_dir)
+    chrome_options.add_argument("--incognito")
 
-browser = webdriver.Chrome(ChromeDriverManager().install(),  options=chrome_options,)
+    browser = webdriver.Chrome(ChromeDriverManager().install(),  options=chrome_options,)
 
-browser.get(BASE_URL)
-browser.maximize_window()
+    browser.get(BASE_URL)
+    browser.maximize_window()
 
-
-phone = "919999999"
-message = 'Hi There. This is test message from PythonCircle.com'
-
-
-browser.get(CHAT_URL.format(phone=phone))
-time.sleep(3)
+    if (input('Break point : ') != ""):
+            return
+    
+    phone = "96178188"
+    message = 'Hi There. This is test message from automation system'
 
 
-inp_xpath = (
-    '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
-)
-input_box = WebDriverWait(browser, 60).until(
-    expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
-)
-input_box.send_keys(message)
-input_box.send_keys(Keys.ENTER)
+    browser.get(CHAT_URL.format(phone=phone))
+    time.sleep(3)
 
-time.sleep(10)
 
-#https://pythoncircle.com/post/775/automating-whatsapp-web-using-selenium-to-send-messages/
+    inp_xpath = (
+        '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
+    )
+    input_box = WebDriverWait(browser, 60).until(
+        expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
+    )
+    input_box.send_keys(message)
+    input_box.send_keys(Keys.ENTER)
+
+    time.sleep(10)
+
+if __name__ == '__main__':
+    main()
+
+# https://pythoncircle.com/post/775/automating-whatsapp-web-using-selenium-to-send-messages/
+
+# https://www.google.com/search?q=auto+login+whatsapp+web+with+selenium&oq=auto+login+whatsapp+web+with+selenium&aqs=edge..69i57j0i546l3.2039j0j1&sourceid=chrome&ie=UTF-8      
