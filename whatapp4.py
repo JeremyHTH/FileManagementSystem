@@ -9,10 +9,22 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
+from GenerateMessage import Generate_Message
+from selenium.webdriver import ActionChains
+
 BASE_URL = "https://web.whatsapp.com/"
 CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&app_absent=1"
 
-def main():
+def ReadData(path: str):
+    import pandas
+    try: 
+        df = pandas.read_excel(path)
+        print(df)
+    except Exception as e:
+        print(e)
+
+    
+def SendMessage():
     chrome_options = Options()
     chrome_options.add_argument("start-maximized")
     user_data_dir = ''.join(random.choices(string.ascii_letters, k=8))
@@ -24,30 +36,39 @@ def main():
     browser.get(BASE_URL)
     browser.maximize_window()
 
+    Data = Generate_Message()
+
     if (input('Break point : ') != ""):
-            return
+        return
+        
+
+    for Phone, Message in Data:
+
+        browser.get(CHAT_URL.format(phone=Phone))
+        time.sleep(3)
+
+
+        inp_xpath = (
+            '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
+        )
+        input_box = WebDriverWait(browser, 60).until(
+            expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
+        )
+        # input_box.send_keys(Message)
+
+        for Line in Message:
+            input_box.send_keys(Line)
+            ActionChains(browser).key_down(Keys.SHIFT).key_down(Keys.ENTER).perform()
+            ActionChains(browser).key_up(Keys.SHIFT).perform()
+        
+        input_box.send_keys(Keys.ENTER)
+
+        time.sleep(10)
+
     
-    phone = "96178188"
-    message = 'Hi There. This is test message from automation system'
-
-
-    browser.get(CHAT_URL.format(phone=phone))
-    time.sleep(3)
-
-
-    inp_xpath = (
-        '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
-    )
-    input_box = WebDriverWait(browser, 60).until(
-        expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
-    )
-    input_box.send_keys(message)
-    input_box.send_keys(Keys.ENTER)
-
-    time.sleep(10)
 
 if __name__ == '__main__':
-    main()
+    SendMessage()
 
 # https://pythoncircle.com/post/775/automating-whatsapp-web-using-selenium-to-send-messages/
 

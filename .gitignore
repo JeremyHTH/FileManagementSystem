@@ -3,3 +3,4 @@ log/*.csv
 log/*.seedin
 log/*.txt
 log/*.xlsx
+Student_Data/*.*

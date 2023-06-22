@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5 import QtGui
 import subprocess
+import platform
 
 class ServerControlWidget(QWidget):
     def __init__(self):
@@ -12,7 +13,8 @@ class ServerControlWidget(QWidget):
         self.Handler = None
         if (not os.path.exists("log")):
             os.mkdir("log")
-        self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_")}.log','a')
+    
+        self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_").replace(":","_")}.log','a')
         self.OutFile.write("Start")
     
     def init_UI(self):
@@ -47,14 +49,24 @@ class ServerControlWidget(QWidget):
             self.Handler.terminate()
             self.OutFile.close()
             self.OutFile = None
-        if (self.OutFile == None):
-            self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_")}.log','a')
-        self.Handler = subprocess.Popen("./StartServer.bash", stdout = self.OutFile)
-        self.ServerStatus.setText("ON")
-        self.ServerStatus.setProperty("state","ON")
-        self.ServerStatus.style().polish(self.ServerStatus)
-        self.UIStart_Button.setEnabled(False)
-        self.UITerminate_Button.setEnabled(True)
+
+        if (platform.system() == 'Windows'):
+            ProcessName = "StartServer.bat"
+        else:
+            ProcessName += './StartServer.bash'
+        print(ProcessName)
+        try:
+            self.Handler = subprocess.Popen(ProcessName, stdout = self.OutFile)
+        except Exception as e:
+            print(e)
+        else:
+            if (self.OutFile == None):
+                self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_")}.log','a')
+            self.ServerStatus.setText("ON")
+            self.ServerStatus.setProperty("state","ON")
+            self.ServerStatus.style().polish(self.ServerStatus)
+            self.UIStart_Button.setEnabled(False)
+            self.UITerminate_Button.setEnabled(True)
 
     def TerminateServer(self):
         if (self.Handler):
@@ -82,15 +94,17 @@ class UserControlWidget(QWidget):
     def init_UI(self):
         
         self.Layout = QGridLayout(self)
+
+        self.CheckBoxList = []
+
         # self.ChineseBox = QCheckBox("Chinese",self)
         # self.EnglishBox = QCheckBox("English",self)
         # self.MathBox = QCheckBox("Math",self)
         # self.OthersBox = QCheckBox("Other",self)
-
-        self.CheckBoxList = []
+        
         index = 0
         try: 
-            with open("log/directory.seedin") as f:
+            with open("Student_Data/directory.csv","r",encoding="utf-8") as f:
                 raw_data = f.readlines()
                 
                 for name in raw_data:
@@ -99,11 +113,13 @@ class UserControlWidget(QWidget):
                     self.CheckBoxList.append(c)
                     index += 1
         except Exception as e:
-            print(e.args)        
-        
+            print("Exception : \n")
+            print(e.args)     
+
+        print(len(self.CheckBoxList))
         self.add_button = QPushButton("add Subject", self)
         self.add_button.clicked.connect(self._AddSubject)
-        self.Layout.addWidget(self.add_button,index//4+1,0,1,2)
+        self.Layout.addWidget(self.add_button,index//4 + 1,0,1,2)
         self.setLayout(self.Layout)
 
     def _AddSubject(self):

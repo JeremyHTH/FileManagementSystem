@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 start.py
+python3 start.py    
