@@ -1,12 +1,10 @@
 import pandas 
 import numpy as np
-def Generate_Message():
-    Message_df = pandas.read_excel(r"C:\Users\jerem\Desktop\Seedin\FileManagementSystem\Student_Data\Sample_Time_Table_Privite.xlsx", engine='openpyxl')
+def Generate_Message(MessageFilePath, ContactFilePath):
 
-    Contact_df = pandas.read_excel(r"C:\Users\jerem\Desktop\Seedin\FileManagementSystem\Student_Data\WTS_Contact_Privite.xlsx", engine='openpyxl')
-
-    print(Message_df)
-    print(Contact_df)
+    Message_df = pandas.read_excel(MessageFilePath, engine='openpyxl')
+    
+    Contact_df = pandas.read_excel(ContactFilePath, engine='openpyxl')
 
 
     # Merge_List = Merge_df.values.tolist()
@@ -17,9 +15,9 @@ def Generate_Message():
 
     # for line in Merge_List:
     #     temp = []
-    #     for item in line:
-    #         print(item, end=" ")
-    #         if (not (item.isnull())):
+    #     for item in lin, end=" ")
+    #         if (not (ie:
+    #         print(itemtem.isnull())):
     #             temp.append(item)
     #     print("")
     #     Processed_Data.append(temp)
@@ -52,5 +50,3 @@ def Generate_Message():
         Message_Set.append([line[2],message.format( line[0], Detail[0], Detail[1] + Detail[2], Detail[3]).split('\n') ])
     
     return Message_Set
-if __name__ == '__main__':  
-    print(Generate_Message()) 
