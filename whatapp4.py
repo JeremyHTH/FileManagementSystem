@@ -11,6 +11,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from GenerateMessage import Generate_Message
 from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.service import Service
 
 BASE_URL = "https://web.whatsapp.com/"
 CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&app_absent=1"
@@ -32,6 +33,8 @@ def SendMessage():
     chrome_options.add_argument("--incognito")
 
     browser = webdriver.Chrome(ChromeDriverManager().install(),  options=chrome_options,)
+
+    # browser = webdriver.Chrome(service=Service(r"C:\Chrome_driver\chromedriver"),  options=chrome_options,)
 
     browser.get(BASE_URL)
     browser.maximize_window()
@@ -63,7 +66,7 @@ def SendMessage():
         
         input_box.send_keys(Keys.ENTER)
 
-        time.sleep(10)
+        time.sleep(2)
 
     
 

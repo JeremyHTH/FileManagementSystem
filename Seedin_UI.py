@@ -49,7 +49,8 @@ class ServerControlWidget(QWidget):
             self.Handler.terminate()
             self.OutFile.close()
             self.OutFile = None
-
+        if (self.OutFile == None):
+            self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_").replace(":","_")}.log','a')
         if (platform.system() == 'Windows'):
             ProcessName = "StartServer.bat"
         else:
@@ -60,8 +61,7 @@ class ServerControlWidget(QWidget):
         except Exception as e:
             print(e)
         else:
-            if (self.OutFile == None):
-                self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_")}.log','a')
+            
             self.ServerStatus.setText("ON")
             self.ServerStatus.setProperty("state","ON")
             self.ServerStatus.style().polish(self.ServerStatus)
