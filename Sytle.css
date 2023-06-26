@@ -1,7 +1,3 @@
-QCheckBox
-{
-    
-}
 
 .status[state = "OFF"]
 {
@@ -17,3 +13,7 @@ QCheckBox
     text-align: center;
 }
 
+.OddLine[state = "True"]
+{
+    background-color: red;
+}

@@ -5,6 +5,9 @@ from PyQt5 import QtGui
 import subprocess
 import platform
 
+# Send Message 
+from SendMessage import SendMessage
+
 class ServerControlWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -127,22 +130,87 @@ class UserControlWidget(QWidget):
             if (button.isChecked()):
                 print(button.text())
 
-class CenterWidget(QWidget):
+class AutoNotificationSystemWidget(QWidget):
     def __init__(self):
         super().__init__()
 
         self.init_UI()
     
+    def init_UI(self):
+        
+        self.Layout = QGridLayout(self)
+
+        self.MessageFilePathLabel = QLabel("Message File Path: ",self)
+        self.Layout.addWidget(self.MessageFilePathLabel,0,0,1,1)
+
+        self.MessageFilePathLineEdit = QLineEdit(self)
+        self.Layout.addWidget(self.MessageFilePathLineEdit,0,1,1,5)
+
+        self.SelectMessageFilePath = QPushButton("Select Path", self)
+        self.SelectMessageFilePath.clicked.connect(self._UpdatePathLineEdit)
+        self.Layout.addWidget(self.SelectMessageFilePath,0,6,1,1)
+
+        self.ContactFilePathLabel = QLabel("Contact File Path: ",self)
+        self.Layout.addWidget(self.ContactFilePathLabel,1,0,1,1)
+
+        self.ContactFilePathLineEdit = QLineEdit(self)
+        self.Layout.addWidget(self.ContactFilePathLineEdit,1,1,1,5)
+
+        self.SelectContactFilePath = QPushButton("Select Path", self)
+        self.SelectContactFilePath.clicked.connect(self._UpdatePathLineEdit)
+        self.Layout.addWidget(self.SelectContactFilePath,1,6,1,1)
+
+        self.SendMessage_Button = QPushButton("Send Message", self)
+        self.SendMessage_Button.clicked.connect(self._SendWhatsappMessage)
+        self.Layout.addWidget(self.SendMessage_Button,3,0,1,2)
+
+        self.setLayout(self.Layout)
+
+    def _SendWhatsappMessage(self):
+        try:
+            SendMessage(self.MessageFilePathLineEdit.text(), self.ContactFilePathLineEdit.text())
+        except Exception as e:
+            QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
+
+    def _UpdatePathLineEdit(self):
+        FilePath, _ = QFileDialog.getOpenFileName(None, 'Open File', 'Student_Data', 'Excel Files (*.xlsx)')
+        
+        if (FilePath):
+            Sender = self.sender()
+            
+            if (Sender == self.SelectMessageFilePath):
+                self.MessageFilePathLineEdit.setText(FilePath)
+
+            elif (Sender == self.SelectContactFilePath):
+                self.ContactFilePathLineEdit.setText(FilePath)
+
+class CenterWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        if (not os.path.exists("log")):
+            os.mkdir("log")
+
+        if (not os.path.exists("Student_Data")):
+                    os.mkdir("Student_Data")
+
+        self.init_UI()
+        
 
     def init_UI(self):
         self.layout = QGridLayout(self)
 
         #First Row (Server)
         self.FirstRow = ServerControlWidget()
-        self.layout.addWidget(self.FirstRow,0,0)
+        self.FirstRow.setProperty("class","OddLine")
+        self.layout.addWidget(self.FirstRow,0,0,1,1)
 
         self.SecondRow = UserControlWidget()
-        self.layout.addWidget(self.SecondRow)
+        self.layout.addWidget(self.SecondRow,1,0,3,1)
+
+        self.ThirdRow = AutoNotificationSystemWidget()
+        self.ThirdRow.setProperty("class","OddLine")
+        self.layout.addWidget(self.ThirdRow,4,0,2,1)
 
         self.setLayout(self.layout)
     
@@ -156,7 +224,7 @@ class MainWindow(QMainWindow):
         
         self.CenterWid = CenterWidget()
         self.setGeometry(1,90,800,600)
-        self.setWindowTitle("Test")
+        self.setWindowTitle("Control Center")
         self.setCentralWidget(self.CenterWid)
         self.status = QStatusBar(self)
         self.status.showMessage("Welcome")

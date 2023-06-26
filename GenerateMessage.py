@@ -39,14 +39,29 @@ def Generate_Message(MessageFilePath, ContactFilePath):
     Time: {}
     Message: {}
     Table: {}
+    {}{}
 
     This message is sent by Seed In Education Centre automation system.'''
-
     Message_Set = []
     for line in Processed_Data: 
-        Detail = line[1].split(" ")
+        Detail = line[1].split("_")
+
+        if (len(Detail) > 4 and Detail[4] == '(XXX)'):
+            continue
+        Remark1 = ""
+        Remark2 = ""
+
+        if (len(Detail) > 4):
+            Remark1 = f"Remark 1 : {Detail[4]}\n"
+        
+        if (len(Detail) > 5):
+            Remark2 = f"Remark 2 : {Detail[5]}\n"
 
         # print(message.format( line[0], Detail[0], Detail[1] + Detail[2], Detail[3]))
-        Message_Set.append([line[2],message.format( line[0], Detail[0], Detail[1] + Detail[2], Detail[3]).split('\n') ])
+        Message_Set.append([line[2],message.format( line[0], 
+                                                    Detail[0], 
+                                                    Detail[1] + Detail[2], Detail[3],
+                                                    Remark1,
+                                                    Remark2).split('\n') ])
     
     return Message_Set

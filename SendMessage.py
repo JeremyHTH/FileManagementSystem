@@ -1,6 +1,7 @@
 import random
 import string
 import time
+import sys, os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -13,36 +14,45 @@ from GenerateMessage import Generate_Message
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 
+from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt5.QtCore import Qt
+
 BASE_URL = "https://web.whatsapp.com/"
 CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&app_absent=1"
 
-def ReadData(path: str):
-    import pandas
-    try: 
-        df = pandas.read_excel(path)
-        print(df)
-    except Exception as e:
-        print(e)
+def SendMessage(MessageFilePath = "", ContactFilePath = ""):
 
+    if (not os.path.exists(MessageFilePath)):
+        QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+        return
     
-def SendMessage():
+    if (not os.path.exists(ContactFilePath)):
+        QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+        return
+
     chrome_options = Options()
     chrome_options.add_argument("start-maximized")
     user_data_dir = ''.join(random.choices(string.ascii_letters, k=8))
     chrome_options.add_argument("--user-data-dir=/tmp/chrome-data/" + user_data_dir)
     chrome_options.add_argument("--incognito")
 
-    browser = webdriver.Chrome(ChromeDriverManager().install(),  options=chrome_options,)
+    try:
+        browser = webdriver.Chrome(service=Service(r"C:\Chrome_driver\chromedriver"),  options=chrome_options,)
+    except:
+        browser = webdriver.Chrome(ChromeDriverManager().install(),  options=chrome_options,)
 
-    # browser = webdriver.Chrome(service=Service(r"C:\Chrome_driver\chromedriver"),  options=chrome_options,)
 
     browser.get(BASE_URL)
     browser.maximize_window()
 
-    Data = Generate_Message()
-
-    if (input('Break point : ') != ""):
-        return
+    Data = Generate_Message(MessageFilePath, ContactFilePath)
+    buttonReply = QMessageBox.question(None, 'Automation System', 'Press Yes if you have logged in to Whatsapp.', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
+    if (not buttonReply == QMessageBox.Yes):
+        QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
+        browser.close()
+        return 
+    
+    
         
 
     for Phone, Message in Data:
@@ -68,9 +78,10 @@ def SendMessage():
 
         time.sleep(2)
 
-    
+    browser.close()
 
 if __name__ == '__main__':
+    app = QApplication(sys.argv)
     SendMessage()
 
 # https://pythoncircle.com/post/775/automating-whatsapp-web-using-selenium-to-send-messages/
