@@ -7,3 +7,4 @@ Student_Data/*.*
 test.py
 Image/logo.png
 __pycache__/*.*
+filebrowser.db
