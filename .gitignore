@@ -5,3 +5,5 @@ log/*.txt
 log/*.xlsx
 Student_Data/*.*
 test.py
+Image/logo.png
+__pycache__/*.*

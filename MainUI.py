@@ -7,6 +7,7 @@ import platform
 
 # Send Message 
 from SendMessage import SendMessage
+from GenerateMessage import GenerateMessageToFile
 
 class ServerControlWidget(QWidget):
     def __init__(self):
@@ -82,6 +83,7 @@ class ServerControlWidget(QWidget):
             self.UITerminate_Button.setEnabled(False)
             self.OutFile.close()
             self.OutFile = None
+            os.system(f'taskkill /IM "filebrowser.exe" /F')
 
     def close(self) -> bool:
         self.TerminateServer()
@@ -160,9 +162,14 @@ class AutoNotificationSystemWidget(QWidget):
         self.SelectContactFilePath.clicked.connect(self._UpdatePathLineEdit)
         self.Layout.addWidget(self.SelectContactFilePath,1,6,1,1)
 
+        self.GenerateMessageToFile_Button = QPushButton("Generate message to file", self)
+        self.GenerateMessageToFile_Button.clicked.connect(self._GenerateMessageToFile)
+        self.Layout.addWidget(self.GenerateMessageToFile_Button,2,0,1,2)
+
         self.SendMessage_Button = QPushButton("Send Message", self)
         self.SendMessage_Button.clicked.connect(self._SendWhatsappMessage)
-        self.Layout.addWidget(self.SendMessage_Button,3,0,1,2)
+        self.Layout.addWidget(self.SendMessage_Button,2,2,1,2)
+
 
         self.setLayout(self.Layout)
 
@@ -171,6 +178,12 @@ class AutoNotificationSystemWidget(QWidget):
             SendMessage(self.MessageFilePathLineEdit.text(), self.ContactFilePathLineEdit.text())
         except Exception as e:
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
+
+    def _GenerateMessageToFile(self):
+        try:
+            GenerateMessageToFile(self.MessageFilePathLineEdit.text(), self.ContactFilePathLineEdit.text())
+        except Exception as e:
+            QMessageBox.warning(self,"Generate message fail",str(e),QMessageBox.Ok)
 
     def _UpdatePathLineEdit(self):
         FilePath, _ = QFileDialog.getOpenFileName(None, 'Open File', 'Student_Data', 'Excel Files (*.xlsx)')
@@ -230,6 +243,7 @@ class MainWindow(QMainWindow):
         self.status.showMessage("Welcome")
         self.setStatusBar(self.status)
 
+        self.setWindowIcon(QtGui.QIcon("Image\logo.png"))
         self.setStyle(QStyleFactory.create('fusion'))
         self.setStyleSheet(self.LoadStyle())
 
@@ -248,6 +262,10 @@ class MainWindow(QMainWindow):
         return super().close()
 
 if __name__ == '__main__':
+    import ctypes
+    myappid = 'EducationCentre.ControlApp.Ver1.5' 
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
     app = QApplication(sys.argv)
     container = MainWindow()
 

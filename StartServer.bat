@@ -1,4 +1,4 @@
 cd C:
 
-@REM cd C:\Resources_Database\
-@REM filebrowser
+cd C:\Resources_Database\
+filebrowser
