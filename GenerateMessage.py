@@ -1,6 +1,7 @@
 import pandas 
 import numpy as np
 import time
+import re
 
 def Generate_Message(MessageFilePath, ContactFilePath):
 
@@ -13,8 +14,8 @@ def Generate_Message(MessageFilePath, ContactFilePath):
 
     # print(Merge_List)
 
-    Processed_Data = []
-
+    ProcessedData = []
+    NotFoundName = []
     # for line in Merge_List:
     #     temp = []
     #     for item in lin, end=" ")
@@ -25,17 +26,27 @@ def Generate_Message(MessageFilePath, ContactFilePath):
     #     Processed_Data.append(temp)
 
     for index1, name1 in enumerate(Message_df['Name']):
-        for index2, name2 in enumerate(Contact_df['姓名(中文)']):
+        found = False
+        try:
+            name1 = re.findall(r'[\u4e00-\u9fff]+', name1)[0]
+        except:
+            pass
 
+        for index2, name2 in enumerate(Contact_df['姓名(中文)']):
             if (name1 == name2):
-                Processed_Data.append([ name1, 
+                ProcessedData.append([ name2, 
                                         Message_df['Detail'][index1], 
                                         Message_df['Date'][index1],
-                                        Contact_df['手提電話'][index2],
-                                        Contact_df['手提電話(母親)'][index2],
-                                        Contact_df['手提電話(父親)'][index2]])
+                                        Contact_df['首要聯絡人'][index2],
+                                        Contact_df['次要聯絡人'][index2],
+                                        Contact_df['其他聯絡人(1)'][index2]])
+                found = True
+        if (not found):
+            NotFoundName.append(name1)
 
-    print(Processed_Data)
+    print(ProcessedData)
+    print("===============")
+    print(NotFoundName)
 
     message = r'''《閣下明天的補習通知》
 致{}同學及家長,
@@ -49,7 +60,7 @@ def Generate_Message(MessageFilePath, ContactFilePath):
 如不想再接收有關訊息，請於辦公時間與我們聯繫。
 '''
     Message_Set = []
-    for line in Processed_Data: 
+    for line in ProcessedData: 
         Detail = line[1].split("_")
 
         if (len(Detail) > 4 and Detail[4] == '(XXX)'):
@@ -73,10 +84,10 @@ def Generate_Message(MessageFilePath, ContactFilePath):
                                                     Remark1,
                                                     Remark2).split('\n') ])
     
-    return Message_Set
+    return Message_Set, NotFoundName
 
 def GenerateMessageToFile(MessageFilePath= "", ContactFilePath=""):
-    Datum = Generate_Message(MessageFilePath, ContactFilePath)
+    Datum, NotFoundData = Generate_Message(MessageFilePath, ContactFilePath)
 
     with open(f'log\\Generate_Message_{time.ctime()[3:].replace(" ","_").replace(":","_")}.txt', 'a', encoding='utf-8') as f:
         for Data in Datum:
@@ -84,3 +95,7 @@ def GenerateMessageToFile(MessageFilePath= "", ContactFilePath=""):
             for line in Data[1]:
                 f.write(f"{line}\n")
             f.write("\n")
+        f.write("=======================================================\n")
+        f.write("Not Found: \n")
+        for name in NotFoundData:
+            f.write(f'{name}\n')

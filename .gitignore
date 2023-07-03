@@ -6,5 +6,5 @@ log/*.xlsx
 Student_Data/*.*
 test.py
 Image/logo.png
-__pycache__/*.*
+__pycache__/*.pyc
 filebrowser.db

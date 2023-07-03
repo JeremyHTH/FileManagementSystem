@@ -184,6 +184,9 @@ class AutoNotificationSystemWidget(QWidget):
             GenerateMessageToFile(self.MessageFilePathLineEdit.text(), self.ContactFilePathLineEdit.text())
         except Exception as e:
             QMessageBox.warning(self,"Generate message fail",str(e),QMessageBox.Ok)
+        else:
+            QMessageBox.information(None,"Generate message","Generate message to txt done",QMessageBox.Ok)
+
 
     def _UpdatePathLineEdit(self):
         FilePath, _ = QFileDialog.getOpenFileName(None, 'Open File', 'Student_Data', 'Excel Files (*.xlsx)')
