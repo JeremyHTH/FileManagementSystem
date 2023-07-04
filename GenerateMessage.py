@@ -57,7 +57,7 @@ def Generate_Message(MessageFilePath, ContactFilePath):
     課室: {}
     {}{}
 此訊息為思研教育中心系統自動發出。
-如不想再接收有關訊息，請於辦公時間與我們聯繫。
+如不想再接收有關訊息，請於辦公時間與我們聯絡。
 '''
     Message_Set = []
     for line in ProcessedData: 
