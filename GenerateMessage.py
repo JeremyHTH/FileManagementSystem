@@ -34,13 +34,20 @@ def Generate_Message(MessageFilePath, ContactFilePath):
 
         for index2, name2 in enumerate(Contact_df['姓名(中文)']):
             if (name1 == name2):
-                ProcessedData.append([ name2, 
-                                        Message_df['Detail'][index1], 
-                                        Message_df['Date'][index1],
-                                        Contact_df['首要聯絡人'][index2],
-                                        Contact_df['次要聯絡人'][index2],
-                                        Contact_df['其他聯絡人(1)'][index2]])
-                found = True
+                search = re.findall(r'\d+', str(Contact_df['首要聯絡人'][index2]))
+                PhoneNum1 = search[0] if len(search) > 0 else ''
+                search = re.findall(r'\d+', str(Contact_df['次要聯絡人'][index2]))
+                PhoneNum2 = search[0] if len(search) > 0 else ''
+                search = re.findall(r'\d+', str(Contact_df['其他聯絡人(1)'][index2]))
+                PhoneNum3 = search[0] if len(search) > 0 else ''
+                if (PhoneNum1 != '' or PhoneNum2 != '' or PhoneNum3 != ''):
+                    ProcessedData.append([ name2, 
+                                            Message_df['Detail'][index1], 
+                                            Message_df['Date'][index1],
+                                            PhoneNum1,
+                                            PhoneNum2,
+                                            PhoneNum3])
+                    found = True
         if (not found):
             NotFoundName.append(name1)
 

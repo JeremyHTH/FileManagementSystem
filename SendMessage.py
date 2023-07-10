@@ -46,7 +46,7 @@ def SendMessage(MessageFilePath = "", ContactFilePath = ""):
     browser.maximize_window()
 
     Data, NotFoundName = Generate_Message(MessageFilePath, ContactFilePath)
-    buttonReply = QMessageBox.question(None, 'Automation System', 'Press Yes if you have logged in to Whatsapp.', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel).setWindowFlags(QMessageBox().windowFlags() | Qt.WindowStaysOnTopHint)
+    buttonReply = QMessageBox.question(None, 'Automation System', 'Press Yes if you have logged in to Whatsapp.', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) #.setWindowFlags(QMessageBox().windowFlags() | Qt.WindowStaysOnTopHint)
     if (not buttonReply == QMessageBox.Yes):
         QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
         browser.close()
