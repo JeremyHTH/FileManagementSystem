@@ -56,13 +56,13 @@ def Generate_Message(MessageFilePath, ContactFilePath):
     print(NotFoundName)
 
     message = r'''《閣下明天的補習通知》
-致{}同學及家長,
+致 {} 同學及家長,
     日期: {}
     時間: {}
     導師: {}
     課堂: {}
     課室: {}
-    {}{}
+    {}  {}
 此訊息為思研教育中心系統自動發出。
 如不想再接收有關訊息，請於辦公時間與我們聯絡。
 '''
@@ -70,7 +70,15 @@ def Generate_Message(MessageFilePath, ContactFilePath):
     for line in ProcessedData: 
         Detail = line[1].split("_")
 
-        if (len(Detail) > 4 and Detail[4] == '(XXX)'):
+        # if (len(Detail) > 4 and Detail[4] == '(XXX)'):
+        #     continue
+        skip = False
+        for i in range(4,len(Detail)):
+            search = re.findall(r'\([x|X]{3}\)', Detail[i])
+            if (len(search) > 0):
+                skip = True
+                break
+        if (skip):
             continue
         Remark1 = ""
         Remark2 = ""
