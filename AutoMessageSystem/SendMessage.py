@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-from GenerateMessage import Generate_Message
+from AutoMessageSystem.GenerateMessage import Generate_Message
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 
