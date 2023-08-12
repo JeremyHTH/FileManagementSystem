@@ -17,7 +17,7 @@ class ServerControlWidget(QWidget):
         super().__init__()
 
         self.init_UI()
-        self.Handler = None
+        self.Handler = None 
         if (not os.path.exists("log")):
             os.mkdir("log")
     
