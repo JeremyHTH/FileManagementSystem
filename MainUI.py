@@ -16,7 +16,7 @@ class ServerControlWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.init_UI()
+        self.InitUI()
         self.Handler = None 
         if (not os.path.exists("log")):
             os.mkdir("log")
@@ -24,7 +24,7 @@ class ServerControlWidget(QWidget):
         self.OutFile = open(f'log/Outfile{time.ctime()[3:].replace(" ","_").replace(":","_")}.log','a')
         self.OutFile.write("Start")
     
-    def init_UI(self):
+    def InitUI(self):
         
         self.Layout = QGridLayout(self)
         self.UIName_Label = QLabel("Start UI", self)
@@ -49,10 +49,14 @@ class ServerControlWidget(QWidget):
         self.Layout.addWidget(self.ServerStatus,0,3,1,1)
 
 
-        self.add_button = QPushButton("add Subject", self)
-        self.add_button.clicked.connect(self._AddSubject)
-        self.Layout.addWidget(self.add_button,1,0,1,2)
-        
+        self.addSubject_button = QPushButton("add Subject", self)
+        self.addSubject_button.clicked.connect(self._AddSubject)
+        self.Layout.addWidget(self.addSubject_button,1,0,1,2)
+
+        self.addUser_button = QPushButton('add User', self)
+        self.addUser_button.clicked.connect(self._AddUser)
+        self.Layout.addWidget(self.addUser_button, 1,2,1,2)
+
         self.setLayout(self.Layout)
 
     def StartServer(self):
@@ -101,6 +105,11 @@ class ServerControlWidget(QWidget):
     def _AddSubject(self):
         self.SubWindow = AddSubjectWidget()
         self.SubWindow.show()
+
+    def _AddUser(self):
+        self.SubWindow = AddUserWidget()
+        self.SubWindow.show()
+
 # class UserControlWidget(QWidget):
 #     def __init__(self):
 #         super().__init__()
@@ -126,9 +135,9 @@ class AutoNotificationSystemWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.init_UI()
+        self.InitUI()
     
-    def init_UI(self):
+    def InitUI(self):
         
         self.Layout = QGridLayout(self)
 
@@ -156,9 +165,9 @@ class AutoNotificationSystemWidget(QWidget):
         self.GenerateMessageToFile_Button.clicked.connect(self._GenerateMessageToFile)
         self.Layout.addWidget(self.GenerateMessageToFile_Button,2,0,1,2)
 
-        self.SendMessage_Button = QPushButton("Send Message", self)
-        self.SendMessage_Button.clicked.connect(self._SendWhatsappMessage)
-        self.Layout.addWidget(self.SendMessage_Button,2,2,1,2)
+        self.SendMessageButton = QPushButton("Send Message", self)
+        self.SendMessageButton.clicked.connect(self._SendWhatsappMessage)
+        self.Layout.addWidget(self.SendMessageButton,2,2,1,2)
 
 
         self.setLayout(self.Layout)
@@ -200,25 +209,25 @@ class CenterWidget(QWidget):
         if (not os.path.exists("Student_Data")):
                     os.mkdir("Student_Data")
 
-        self.init_UI()
+        self.InitUI()
         
 
-    def init_UI(self):
-        self.layout = QGridLayout(self)
+    def InitUI(self):
+        self.Layout = QGridLayout(self)
 
         #First Row (Server)
         self.FirstRow = ServerControlWidget()
         self.FirstRow.setProperty("class","OddLine")
-        self.layout.addWidget(self.FirstRow,0,0,1,1)
+        self.Layout.addWidget(self.FirstRow,0,0,1,1)
 
         # self.SecondRow = UserControlWidget()
         # self.layout.addWidget(self.SecondRow,1,0,1,1)
 
         self.ThirdRow = AutoNotificationSystemWidget()
         self.ThirdRow.setProperty("class","OddLine")
-        self.layout.addWidget(self.ThirdRow,3,0,2,1)
+        self.Layout.addWidget(self.ThirdRow,3,0,2,1)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.Layout)
     
     def close(self) -> bool:
         self.FirstRow.close()
@@ -229,7 +238,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.CenterWid = CenterWidget()
-        self.setGeometry(1,90,800,600)
+        self.setGeometry(1000,300,800,600)
         self.setWindowTitle("Control Center")
         self.setCentralWidget(self.CenterWid)
         self.status = QStatusBar(self)
@@ -241,14 +250,14 @@ class MainWindow(QMainWindow):
         self.setStyleSheet(self.LoadStyle())
 
     def LoadStyle(self):
-        data = ""
+        Data = ""
         try:
             with open('Sytle.css','r') as f: 
-                data = f.read()
+                Data = f.read()
         except Exception as e:
             print(e.args)
             # QMessageBox.question(self,'Error',str(e))
-        return data
+        return Data
     
     def close(self) -> bool:
         self.CenterWid.close()

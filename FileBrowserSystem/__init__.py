@@ -1,3 +1,3 @@
-from FileBrowserSystem.FileBrowserScript import AddSubjectWidget
+from FileBrowserSystem.FileBrowserScript import AddSubjectWidget, AddUserWidget
 
-__all__ = ["AddSubjectWidget"]
+__all__ = ["AddSubjectWidget", "AddUserWidget"]

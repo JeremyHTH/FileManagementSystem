@@ -5,6 +5,8 @@ class AddSubjectWidget(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setGeometry(1000, 300, 400, 300)
+        self.setWindowTitle("Add Subject")
         self.init_UI()
     
     def init_UI(self):
@@ -13,35 +15,35 @@ class AddSubjectWidget(QWidget):
 
         self.CheckBoxList = []
 
-        index = 0
+        Index = 0
         try: 
             with open("Student_Data/directory.csv","r",encoding="utf-8") as f:
                 raw_data = f.readlines()
                 
                 for name in raw_data:
                     c = QCheckBox(name[1:-1],self)
-                    self.Layout.addWidget(c,index//4,index%4)
+                    self.Layout.addWidget(c,Index//4,Index%4)
                     self.CheckBoxList.append(c)
-                    index += 1
+                    Index += 1
         except Exception as e:
             print("Exception : \n")
             print(e.args)     
 
         self._GetServerUserName()
         self.UserNameLabel = QLabel("User :")
-        self.Layout.addWidget(self.UserNameLabel, index//4 + 1, 0, 1, 1)
+        self.Layout.addWidget(self.UserNameLabel, Index//4 + 1, 0, 1, 1)
         self.UserNameCombobox = QComboBox(self)
         self.UserNameCombobox.addItems(self.UserNameDict.keys())
-        self.Layout.addWidget(self.UserNameCombobox, index//4 + 1, 1, 1, 3)
+        self.Layout.addWidget(self.UserNameCombobox, Index//4 + 1, 1, 1, 3)
 
 
-        self.add_button = QPushButton("add Subject", self)
+        self.add_button = QPushButton("Add subject", self)
         self.add_button.clicked.connect(self._AddToSystem)
-        self.Layout.addWidget(self.add_button, index//4 + 2, 0, 1, 2)
+        self.Layout.addWidget(self.add_button, Index//4 + 2, 0, 1, 2)
 
-        self.add_button = QPushButton("Test", self)
+        self.add_button = QPushButton("Add user", self)
         self.add_button.clicked.connect(self._GetServerUserName)
-        self.Layout.addWidget(self.add_button, index//4 + 2, 2, 1, 2)
+        self.Layout.addWidget(self.add_button, Index//4 + 2, 2, 1, 2)
 
         self.setLayout(self.Layout)
 
@@ -80,9 +82,41 @@ class AddSubjectWidget(QWidget):
             self.UserNameDict[line[1]] = line[0]
         # print(self.UserNameDict)
 
+class AddUserWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+    
+        self.setGeometry(1000, 300, 400, 300)
+        self.setWindowTitle("Add User")
+        self.InitUI()
+    def InitUI(self):
+        self.Layout = QGridLayout()
+        
+        self.UserNameLabel = QLabel("User Name :", self)
+        self.Layout.addWidget(self.UserNameLabel, 0, 0, 1, 1)
+
+        self.UserNameLineEdit = QLineEdit(self)
+        self.Layout.addWidget(self.UserNameLineEdit, 0, 1, 1, 3)
+
+        self.PasswordLabel = QLabel("Password :", self)
+        self.Layout.addWidget(self.PasswordLabel, 1, 0, 1, 1)
+
+        self.PasswordLineEdit = QLineEdit(self)
+        self.Layout.addWidget(self.PasswordLineEdit, 1, 1, 1, 3)
+
+        self.AddUserButton = QPushButton("Add user name", self)
+        self.AddUserButton.clicked.connect(self._AddUser)
+        self.Layout.addWidget(self.AddUserButton, 2, 0, 1, 4)
+
+        self.setLayout(self.Layout)
+
+    def _AddUser(self):
+        pass
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     container = AddSubjectWidget()
-
     container.show()
+    
+    container2 = AddUserWidget()
+    container2.show()
     sys.exit(app.exec_())

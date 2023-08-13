@@ -25,47 +25,43 @@ def Generate_Message(MessageFilePath, ContactFilePath):
     #     print("")
     #     Processed_Data.append(temp)
 
-    for index1, name1 in enumerate(Message_df['Name']):
+    for Index1, Name1 in enumerate(Message_df['Name']):
         found = False
         try:
-            name1 = re.findall(r'[\u4e00-\u9fff]+', name1)[0]
+            Name1 = re.findall(r'[\u4e00-\u9fff]+', Name1)[0]
         except:
             pass
 
-        for index2, name2 in enumerate(Contact_df['姓名(中文)']):
-            if (name1 == name2):
-                search = re.findall(r'\d+', str(Contact_df['首要聯絡人'][index2]))
-                PhoneNum1 = search[0] if len(search) > 0 else ''
-                search = re.findall(r'\d+', str(Contact_df['次要聯絡人'][index2]))
-                PhoneNum2 = search[0] if len(search) > 0 else ''
-                search = re.findall(r'\d+', str(Contact_df['其他聯絡人(1)'][index2]))
-                PhoneNum3 = search[0] if len(search) > 0 else ''
+        for Index2, Name2 in enumerate(Contact_df['姓名(中文)']):
+            if (Name1 == Name2):
+                Search = re.findall(r'\d+', str(Contact_df['首要聯絡人'][Index2]))
+                PhoneNum1 = Search[0] if len(Search) > 0 else ''
+                Search = re.findall(r'\d+', str(Contact_df['次要聯絡人'][Index2]))
+                PhoneNum2 = Search[0] if len(Search) > 0 else ''
+                Search = re.findall(r'\d+', str(Contact_df['其他聯絡人(1)'][Index2]))
+                PhoneNum3 = Search[0] if len(Search) > 0 else ''
                 if (PhoneNum1 != '' or PhoneNum2 != '' or PhoneNum3 != ''):
-                    ProcessedData.append([ name2, 
-                                            Message_df['Detail'][index1], 
-                                            Message_df['Date'][index1],
+                    ProcessedData.append([ Name2, 
+                                            Message_df['Detail'][Index1], 
+                                            Message_df['Date'][Index1],
                                             PhoneNum1,
                                             PhoneNum2,
                                             PhoneNum3])
                     found = True
+                    break
         if (not found):
-            NotFoundName.append(name1)
+            NotFoundName.append(Name1)
 
-    print(ProcessedData)
-    print("===============")
-    print(NotFoundName)
+    # print(ProcessedData)
+    # print("===============")
+    # print(NotFoundName)
 
-    message = r'''《閣下明天的補習通知》
-致 {} 同學及家長,
-    日期: {}
-    時間: {}
-    導師: {}
-    課堂: {}
-    課室: {}
-    {}  {}
-此訊息為思研教育中心系統自動發出。
-如不想再接收有關訊息，請於辦公時間與我們聯絡。
-'''
+    message = ""
+    with open("Student_Data\StudentMessage.txt", 'r', encoding="utf-8") as f:
+        SpanMessage = f.readlines()
+        for line in SpanMessage:
+            message += f'{line}\n'
+            
     Message_Set = []
     for line in ProcessedData: 
         Detail = line[1].split("_")
@@ -74,8 +70,8 @@ def Generate_Message(MessageFilePath, ContactFilePath):
         #     continue
         skip = False
         for i in range(4,len(Detail)):
-            search = re.findall(r'\([x|X]{3}\)', Detail[i])
-            if (len(search) > 0):
+            Search = re.findall(r'\([x|X]{3}\)', Detail[i])
+            if (len(Search) > 0):
                 skip = True
                 break
         if (skip):
