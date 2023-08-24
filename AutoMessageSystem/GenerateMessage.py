@@ -106,9 +106,22 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
 
     ProcessedData = []
     NotFoundName = []
+    SpamData = {}
 
-    for Index1, Name1 in enumerate(Message_df['Detail']):
-        found = False
+    for Detail in Message_df['Detail']:
+        Line = Detail.split('_')
+        if (len(Line) < 4):
+            continue
+        CourseTitle = Line[0] + '-'+ Line[2]
+        if (not Line[1] in SpamData):
+            SpamData[Line[1]] = [CourseTitle]
+        else:
+            if (not CourseTitle in SpamData[Line[1]]):
+                SpamData[Line[1]].append(CourseTitle)
+
+    print(SpamData)
+
+    return ProcessedData, NotFoundName
 
 def GenerateStudentMessageToFile(MessageFilePath= "", ContactFilePath=""):
     Datum, NotFoundData = GenerateStudentMessage(MessageFilePath, ContactFilePath)
@@ -130,7 +143,7 @@ def GenerateTutorMessageToFile(MessageFilePath= "", ContactFilePath=""):
     Datum, NotFoundData = GenerateTutorMessage(MessageFilePath, ContactFilePath)
     if not os.path.exists('log'):
         os.mkdir('log')
-        
+
     with open(f'log\\Generate_Message_{time.ctime()[3:].replace(" ","_").replace(":","_")}.txt', 'a', encoding='utf-8') as f:
         for Data in Datum:
             f.write(f"{Data[0]}\n")

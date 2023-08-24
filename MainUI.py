@@ -145,43 +145,51 @@ class AutoNotificationSystemWidget(QWidget):
         self.Layout.addWidget(self.MessageFilePathLabel,0,0,1,1)
 
         self.MessageFilePathLineEdit = QLineEdit(self)
-        self.Layout.addWidget(self.MessageFilePathLineEdit,0,1,1,5)
+        self.Layout.addWidget(self.MessageFilePathLineEdit,0,1,1,6)
 
         self.SelectMessageFilePath = QPushButton("Select Path", self)
         self.SelectMessageFilePath.clicked.connect(self._UpdatePathLineEdit)
-        self.Layout.addWidget(self.SelectMessageFilePath,0,6,1,1)
+        self.Layout.addWidget(self.SelectMessageFilePath,0,7,1,1)
 
         self.StudentContactFilePathLabel = QLabel("Student Contact File Path: ",self)
         self.Layout.addWidget(self.StudentContactFilePathLabel,1,0,1,1)
 
         self.StudentContactFilePathLineEdit = QLineEdit(self)
-        self.Layout.addWidget(self.StudentContactFilePathLineEdit,1,1,1,5)
+        self.Layout.addWidget(self.StudentContactFilePathLineEdit,1,1,1,6)
 
         self.SelectStudentContactFilePath = QPushButton("Select Path", self)
         self.SelectStudentContactFilePath.clicked.connect(self._UpdatePathLineEdit)
-        self.Layout.addWidget(self.SelectStudentContactFilePath,1,6,1,1)
+        self.Layout.addWidget(self.SelectStudentContactFilePath,1,7,1,1)
 
         self.TutorContactFilePathLabel = QLabel("Tutor Contact File Path: ",self)
         self.Layout.addWidget(self.TutorContactFilePathLabel,2,0,1,1)
 
         self.TutorContactFilePathLineEdit = QLineEdit(self)
-        self.Layout.addWidget(self.TutorContactFilePathLineEdit,2,1,1,5)
+        self.Layout.addWidget(self.TutorContactFilePathLineEdit,2,1,1,6)
 
         self.SelectTutorContactFilePath = QPushButton("Select Path", self)
         self.SelectTutorContactFilePath.clicked.connect(self._UpdatePathLineEdit)
-        self.Layout.addWidget(self.SelectTutorContactFilePath,2,6,1,1)
+        self.Layout.addWidget(self.SelectTutorContactFilePath,2,7,1,1)
 
         self.GenerateStudentMessageToFileButton = QPushButton("Generate student message to file", self)
-        self.GenerateStudentMessageToFileButton.clicked.connect(self.GenerateStudentMessageToFile)
+        self.GenerateStudentMessageToFileButton.clicked.connect(self.GenerateStudentWhatsappMessageToFile)
         self.Layout.addWidget(self.GenerateStudentMessageToFileButton,3,0,1,2)
 
-        self.SendMessageButton = QPushButton("Send Message", self)
-        self.SendMessageButton.clicked.connect(self._SendStudentWhatsappMessage)
-        self.Layout.addWidget(self.SendMessageButton,3,2,1,2)
+        self.SendStudentMessageMessageButton = QPushButton("Send Student Message", self)
+        self.SendStudentMessageMessageButton.clicked.connect(self._SendStudentWhatsappMessage)
+        self.Layout.addWidget(self.SendStudentMessageMessageButton,3,2,1,2)
+
+        self.GenerateTutorMessageToFileButton = QPushButton("Generate Tutor message to file", self)
+        self.GenerateTutorMessageToFileButton.clicked.connect(self.GenerateTutorWhatsappMessageToFile)
+        self.Layout.addWidget(self.GenerateTutorMessageToFileButton,3,4,1,2)
+
+        self.SendTutorMessageMessageButton = QPushButton("Send Tutor Message", self)
+        self.SendTutorMessageMessageButton.clicked.connect(self._SendTutorWhatsappMessage)
+        self.Layout.addWidget(self.SendTutorMessageMessageButton,3,6,1,2)
 
         self.setLayout(self.Layout)
 
-    def _SendStudentWhatsappMessage(self : list):
+    def _SendStudentWhatsappMessage(self):
         try:
             if (not os.path.exists(self.MessageFilePathLineEdit.text())):
                 QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
@@ -212,7 +220,7 @@ class AutoNotificationSystemWidget(QWidget):
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
 
 
-    def GenerateStudentMessageToFile(self):
+    def GenerateStudentWhatsappMessageToFile(self):
         try:
             if (not os.path.exists(self.MessageFilePathLineEdit.text())):
                 QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
@@ -228,7 +236,7 @@ class AutoNotificationSystemWidget(QWidget):
         else:
             QMessageBox.information(None,"Generate message","Generate message to txt done",QMessageBox.Ok)
 
-    def GenerateTutorMessageToFile(self):
+    def GenerateTutorWhatsappMessageToFile(self):
         try:
             if (not os.path.exists(self.MessageFilePathLineEdit.text())):
                 QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
