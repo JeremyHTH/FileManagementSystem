@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-from AutoMessageSystem.GenerateMessage import Generate_Message
+from AutoMessageSystem.GenerateMessage import GenerateStudentMessage
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 
@@ -20,15 +20,15 @@ from PyQt5.QtCore import Qt
 BASE_URL = "https://web.whatsapp.com/"
 CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&app_absent=1"
 
-def SendMessage(MessageFilePath = "", ContactFilePath = ""):
+def SendMessage(Data):
 
-    if (not os.path.exists(MessageFilePath)):
-        QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
-        return
+    # if (not os.path.exists(MessageFilePath)):
+    #     QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+    #     return
     
-    if (not os.path.exists(ContactFilePath)):
-        QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
-        return
+    # if (not os.path.exists(ContactFilePath)):
+    #     QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+    #     return
 
     chrome_options = Options()
     chrome_options.add_argument("start-maximized")
@@ -37,15 +37,16 @@ def SendMessage(MessageFilePath = "", ContactFilePath = ""):
     chrome_options.add_argument("--incognito")
 
     try:
-        browser = webdriver.Chrome(service=Service(r"C:\Chrome_driver\chromedriver"),  options=chrome_options,)
+        browser = webdriver.Chrome(service=Service(r"C:\ChromeDriver\chrome-win32\chromedriver"),  options=chrome_options,)
+        print('1')
     except:
-        browser = webdriver.Chrome(ChromeDriverManager().install(),  options=chrome_options,)
-
+        print('2')
+        browser = webdriver.Chrome(service = Service(ChromeDriverManager().install()),  options=chrome_options,)
 
     browser.get(BASE_URL)
     browser.maximize_window()
 
-    Data, NotFoundName = Generate_Message(MessageFilePath, ContactFilePath)
+    # Data, NotFoundName = GenerateStudentMessage(MessageFilePath, ContactFilePath)
     buttonReply = QMessageBox.question(None, 'Automation System', 'Press Yes if you have logged in to Whatsapp.', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) #.setWindowFlags(QMessageBox().windowFlags() | Qt.WindowStaysOnTopHint)
     if (not buttonReply == QMessageBox.Yes):
         QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)

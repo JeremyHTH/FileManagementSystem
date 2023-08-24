@@ -151,41 +151,98 @@ class AutoNotificationSystemWidget(QWidget):
         self.SelectMessageFilePath.clicked.connect(self._UpdatePathLineEdit)
         self.Layout.addWidget(self.SelectMessageFilePath,0,6,1,1)
 
-        self.ContactFilePathLabel = QLabel("Contact File Path: ",self)
-        self.Layout.addWidget(self.ContactFilePathLabel,1,0,1,1)
+        self.StudentContactFilePathLabel = QLabel("Student Contact File Path: ",self)
+        self.Layout.addWidget(self.StudentContactFilePathLabel,1,0,1,1)
 
-        self.ContactFilePathLineEdit = QLineEdit(self)
-        self.Layout.addWidget(self.ContactFilePathLineEdit,1,1,1,5)
+        self.StudentContactFilePathLineEdit = QLineEdit(self)
+        self.Layout.addWidget(self.StudentContactFilePathLineEdit,1,1,1,5)
 
-        self.SelectContactFilePath = QPushButton("Select Path", self)
-        self.SelectContactFilePath.clicked.connect(self._UpdatePathLineEdit)
-        self.Layout.addWidget(self.SelectContactFilePath,1,6,1,1)
+        self.SelectStudentContactFilePath = QPushButton("Select Path", self)
+        self.SelectStudentContactFilePath.clicked.connect(self._UpdatePathLineEdit)
+        self.Layout.addWidget(self.SelectStudentContactFilePath,1,6,1,1)
 
-        self.GenerateMessageToFile_Button = QPushButton("Generate message to file", self)
-        self.GenerateMessageToFile_Button.clicked.connect(self._GenerateMessageToFile)
-        self.Layout.addWidget(self.GenerateMessageToFile_Button,2,0,1,2)
+        self.TutorContactFilePathLabel = QLabel("Tutor Contact File Path: ",self)
+        self.Layout.addWidget(self.TutorContactFilePathLabel,2,0,1,1)
+
+        self.TutorContactFilePathLineEdit = QLineEdit(self)
+        self.Layout.addWidget(self.TutorContactFilePathLineEdit,2,1,1,5)
+
+        self.SelectTutorContactFilePath = QPushButton("Select Path", self)
+        self.SelectTutorContactFilePath.clicked.connect(self._UpdatePathLineEdit)
+        self.Layout.addWidget(self.SelectTutorContactFilePath,2,6,1,1)
+
+        self.GenerateStudentMessageToFileButton = QPushButton("Generate student message to file", self)
+        self.GenerateStudentMessageToFileButton.clicked.connect(self.GenerateStudentMessageToFile)
+        self.Layout.addWidget(self.GenerateStudentMessageToFileButton,3,0,1,2)
 
         self.SendMessageButton = QPushButton("Send Message", self)
-        self.SendMessageButton.clicked.connect(self._SendWhatsappMessage)
-        self.Layout.addWidget(self.SendMessageButton,2,2,1,2)
-
+        self.SendMessageButton.clicked.connect(self._SendStudentWhatsappMessage)
+        self.Layout.addWidget(self.SendMessageButton,3,2,1,2)
 
         self.setLayout(self.Layout)
 
-    def _SendWhatsappMessage(self):
+    def _SendStudentWhatsappMessage(self : list):
         try:
-            SendMessage(self.MessageFilePathLineEdit.text(), self.ContactFilePathLineEdit.text())
+            if (not os.path.exists(self.MessageFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            if (not os.path.exists(self.StudentContactFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            Data, _ = GenerateStudentMessage(self.MessageFilePathLineEdit.text(), self.StudentContactFilePathLineEdit.text())
+            SendMessage(Data)
         except Exception as e:
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
 
-    def _GenerateMessageToFile(self):
+    def _SendTutorWhatsappMessage(self):
         try:
-            GenerateMessageToFile(self.MessageFilePathLineEdit.text(), self.ContactFilePathLineEdit.text())
+            if (not os.path.exists(self.MessageFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            if (not os.path.exists(self.TutorContactFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            Data, _ = GenerateStudentMessage(self.MessageFilePathLineEdit.text(), self.TutorContactFilePathLineEdit.text())
+            SendMessage(Data)
+        except Exception as e:
+            QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
+
+
+    def GenerateStudentMessageToFile(self):
+        try:
+            if (not os.path.exists(self.MessageFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            if (not os.path.exists(self.StudentContactFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            GenerateStudentMessageToFile(self.MessageFilePathLineEdit.text(), self.StudentContactFilePathLineEdit.text())
         except Exception as e:
             QMessageBox.warning(self,"Generate message fail",str(e),QMessageBox.Ok)
         else:
             QMessageBox.information(None,"Generate message","Generate message to txt done",QMessageBox.Ok)
 
+    def GenerateTutorMessageToFile(self):
+        try:
+            if (not os.path.exists(self.MessageFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            if (not os.path.exists(self.TutorContactFilePathLineEdit.text())):
+                QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                return
+            
+            GenerateTutorMessageToFile(self.MessageFilePathLineEdit.text(), self.TutorContactFilePathLineEdit.text())
+        except Exception as e:
+            QMessageBox.warning(self,"Generate message fail",str(e),QMessageBox.Ok)
+        else:
+            QMessageBox.information(None,"Generate message","Generate message to txt done",QMessageBox.Ok)
 
     def _UpdatePathLineEdit(self):
         FilePath, _ = QFileDialog.getOpenFileName(None, 'Open File', 'Student_Data', 'Excel Files (*.xlsx)')
@@ -196,8 +253,12 @@ class AutoNotificationSystemWidget(QWidget):
             if (Sender == self.SelectMessageFilePath):
                 self.MessageFilePathLineEdit.setText(FilePath)
 
-            elif (Sender == self.SelectContactFilePath):
-                self.ContactFilePathLineEdit.setText(FilePath)
+            elif (Sender == self.SelectTutorContactFilePath):
+                self.TutorContactFilePathLineEdit.setText(FilePath)
+
+
+            elif (Sender == self.SelectStudentContactFilePath):
+                self.StudentContactFilePathLineEdit.setText(FilePath)
 
 class CenterWidget(QWidget):
     def __init__(self):

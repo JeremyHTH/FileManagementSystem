@@ -1,4 +1,4 @@
-from AutoMessageSystem.GenerateMessage import Generate_Message, GenerateMessageToFile
+from AutoMessageSystem.GenerateMessage import GenerateStudentMessage, GenerateTutorMessage, GenerateStudentMessageToFile
 from AutoMessageSystem.SendMessage import SendMessage
 
-__all__= ["Generate_Message", "GenerateMessageToFile", "SendMessage"]
+__all__= ["GenerateStudentMessage", "GenerateTutorMessage", "GenerateStudentMessageToFile", "SendMessage"]
