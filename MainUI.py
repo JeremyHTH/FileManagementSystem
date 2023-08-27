@@ -214,7 +214,7 @@ class AutoNotificationSystemWidget(QWidget):
                 QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
                 return
             
-            Data, _ = GenerateStudentMessage(self.MessageFilePathLineEdit.text(), self.TutorContactFilePathLineEdit.text())
+            Data, _ = GenerateTutorMessage(self.MessageFilePathLineEdit.text(), self.TutorContactFilePathLineEdit.text())
             SendMessage(Data)
         except Exception as e:
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)

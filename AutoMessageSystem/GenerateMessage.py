@@ -95,7 +95,7 @@ def GenerateStudentMessage(MessageFilePath, StudentContactFilePath):
                                                     Detail[3],
                                                     Remark1,
                                                     Remark2).split('\n') ])
-        print(MessageSet)
+    print(MessageSet)
     return MessageSet, NotFoundName
 
 def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
@@ -104,7 +104,7 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
     
     TutorContact_df = pandas.read_excel(TutorContactFilePath, engine='openpyxl')
 
-    ProcessedData = []
+    MessageSet = []
     NotFoundName = []
     SpamData = {}
 
@@ -112,16 +112,30 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
         Line = Detail.split('_')
         if (len(Line) < 4):
             continue
-        CourseTitle = Line[0] + '-'+ Line[2]
+        CourseTitle = '    ' + Line[0] + ' -> ' + Line[2] + '\n'
         if (not Line[1] in SpamData):
-            SpamData[Line[1]] = [CourseTitle]
+            SpamData[Line[1]] = CourseTitle
         else:
             if (not CourseTitle in SpamData[Line[1]]):
-                SpamData[Line[1]].append(CourseTitle)
+                SpamData[Line[1]] += CourseTitle
 
-    print(SpamData)
 
-    return ProcessedData, NotFoundName
+    Message = ""
+    with open("Student_Data\TutorMessage.txt", 'r', encoding="utf-8") as f:
+        SpamMessage = f.readlines()
+        for line in SpamMessage:
+            Message += line
+
+    for Key, Value in SpamData.items():
+        # print(TutorContact_df[TutorContact_df['NickName']=='Ms曾'])
+        # print('4',TutorContact_df[TutorContact_df['NickName']=='Ms曾']['PhoneNum'].values[0])
+        SearchResult = TutorContact_df[TutorContact_df['NickName'] == Key]
+        if (len(SearchResult) > 0):
+            MessageSet.append([SearchResult['PhoneNum'].values[0], Message.format(SearchResult['NickName'].values[0], Value).split('\n')])
+        else:
+            NotFoundName.append(Key)
+
+    return MessageSet, NotFoundName
 
 def GenerateStudentMessageToFile(MessageFilePath= "", ContactFilePath=""):
     Datum, NotFoundData = GenerateStudentMessage(MessageFilePath, ContactFilePath)

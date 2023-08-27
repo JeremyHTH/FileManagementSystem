@@ -37,11 +37,10 @@ def SendMessage(Data):
     chrome_options.add_argument("--incognito")
 
     try:
-        browser = webdriver.Chrome(service=Service(r"C:\ChromeDriver\chrome-win32\chromedriver"),  options=chrome_options,)
-        print('1')
+        browser = webdriver.Chrome(service = Service(ChromeDriverManager().install()),  options=chrome_options,)
     except:
         print('2')
-        browser = webdriver.Chrome(service = Service(ChromeDriverManager().install()),  options=chrome_options,)
+        browser = webdriver.Chrome(service=Service(r"C:\ChromeDriver\chrome-win32\chromedriver"),  options=chrome_options,)
 
     browser.get(BASE_URL)
     browser.maximize_window()
