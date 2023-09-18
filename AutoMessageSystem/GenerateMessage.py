@@ -1,3 +1,4 @@
+from ast import Lambda
 import pandas 
 import numpy as np
 import time
@@ -108,16 +109,34 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
     NotFoundName = []
     SpamData = {}
 
-    for Detail in Message_df['Detail']:
+    for Index, Detail in enumerate(Message_df['Detail']):
         Line = Detail.split('_')
         if (len(Line) < 4):
             continue
-        CourseTitle = '    ' + Line[0] + ' -> ' + Line[2] + '\n'
-        if (not Line[1] in SpamData):
-            SpamData[Line[1]] = CourseTitle
+        
+        Time, TutorName, CourseName, Room, *_ = Line
+        if (not TutorName in SpamData):
+            SpamData[TutorName] = {}
+
+        CurrentStudentName = re.findall(r'[\u4e00-\u9fff]+', Message_df['Name'][Index])[0]
+        if (not Time in SpamData[TutorName]):
+            SpamData[TutorName][Time] = {   'CourseName': [CourseName],
+                                            'Room': Room, 
+                                            'Date': str(Message_df['Date'][Index])[:10], 
+                                            'StudentList':[CurrentStudentName]}
         else:
-            if (not CourseTitle in SpamData[Line[1]]):
-                SpamData[Line[1]] += CourseTitle
+            SpamData[TutorName][Time]['StudentList'].append(CurrentStudentName)
+            if (not CourseName in SpamData[TutorName][Time]['CourseName']):
+                SpamData[TutorName][Time]['CourseName'].append(CourseName)
+        # Name = Line[1]
+        # CourseTitle = '    ' + Line[0] + ' -> ' + Line[2] + '\n'
+        # if (not Name in SpamData):
+        #     SpamData[Name] = CourseTitle
+        # else:
+        #     if (not CourseTitle in SpamData[Name]):
+        #         SpamData[Name] += CourseTitle
+
+    # print(SpamData)
 
 
     Message = ""
@@ -126,14 +145,31 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
         for line in SpamMessage:
             Message += line
 
-    for Key, Value in SpamData.items():
+    for TutorName, DataSet in SpamData.items():
         # print(TutorContact_df[TutorContact_df['NickName']=='Ms曾'])
         # print('4',TutorContact_df[TutorContact_df['NickName']=='Ms曾']['PhoneNum'].values[0])
-        SearchResult = TutorContact_df[TutorContact_df['NickName'] == Key]
+        SearchResult = TutorContact_df[TutorContact_df['NickName'] == TutorName]
+        print(DataSet)
         if (len(SearchResult) > 0):
-            MessageSet.append([SearchResult['PhoneNum'].values[0], Message.format(SearchResult['NickName'].values[0], Value).split('\n')])
+            Data = ''
+            for Time, ClassDetail in DataSet.items():
+                print(Time, ClassDetail)
+                Data += f'    日期:{ClassDetail["Date"]}\n'
+                Data += f'    時間:{Time}\n'
+                ClassTitle = ''
+                for Title in ClassDetail['CourseName']:
+                    ClassTitle += Title + ','
+                Data += f'    課堂:{ClassTitle}\n'
+                Data += f'    課室:{ClassDetail["Room"]}\n'
+                Students = ''
+                for Student in ClassDetail['StudentList']:
+                    Students += Student + ','
+                Data += f'    學生列表:{Students}\n'
+                Data += '========================\n'
+
+            MessageSet.append([SearchResult['PhoneNum'].values[0], Message.format(SearchResult['NickName'].values[0], Data).split('\n')])
         else:
-            NotFoundName.append(Key)
+            NotFoundName.append(TutorName)
 
     return MessageSet, NotFoundName
 
