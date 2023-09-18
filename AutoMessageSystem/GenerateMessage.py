@@ -1,4 +1,5 @@
-from ast import Lambda
+from ast import Lambda, Raise
+from logging import raiseExceptions
 import pandas 
 import numpy as np
 import time
@@ -66,6 +67,8 @@ def GenerateStudentMessage(MessageFilePath, StudentContactFilePath):
             
     MessageSet = []
     for line in ProcessedData: 
+        if (not isinstance(line[1], str)):
+            continue    #May need better error handling later
         Detail = line[1].split("_")
 
         # if (len(Detail) > 4 and Detail[4] == '(XXX)'):
@@ -110,9 +113,11 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
     SpamData = {}
 
     for Index, Detail in enumerate(Message_df['Detail']):
+        if (not isinstance(Detail, str)):
+            continue    #May need better error handling later
         Line = Detail.split('_')
         if (len(Line) < 4):
-            continue
+            continue    #May need better error handling later
         
         Time, TutorName, CourseName, Room, *_ = Line
         if (not TutorName in SpamData):
@@ -165,7 +170,7 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
                 for Student in ClassDetail['StudentList']:
                     Students += Student + ','
                 Data += f'    學生列表:{Students}\n'
-                Data += '========================\n'
+                Data += '    ========================\n'
 
             MessageSet.append([SearchResult['PhoneNum'].values[0], Message.format(SearchResult['NickName'].values[0], Data).split('\n')])
         else:
