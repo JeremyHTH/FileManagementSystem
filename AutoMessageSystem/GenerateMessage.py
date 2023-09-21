@@ -119,6 +119,15 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
         if (len(Line) < 4):
             continue    #May need better error handling later
         
+        skip = False
+        for i in range(4,len(Line)):
+            Search = re.findall(r'\([x|X]{3}\)', Line[i])
+            if (len(Search) > 0):
+                skip = True
+                break
+        if (skip):
+            continue
+
         Time, TutorName, CourseName, Room, *_ = Line
         if (not TutorName in SpamData):
             SpamData[TutorName] = {}
