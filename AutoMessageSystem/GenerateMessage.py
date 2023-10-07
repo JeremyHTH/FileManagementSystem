@@ -176,10 +176,10 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
                 Data += f'    課堂:{ClassTitle}\n'
                 Data += f'    課室:{ClassDetail["Room"]}\n'
                 Students = ''
-                for Student in ClassDetail['StudentList']:
-                    Students += Student + ','
+                for Index, Student in enumerate(ClassDetail['StudentList']):
+                    Students += f'    {Index}.' + Student + '\n'
                 Data += f'    學生列表:{Students}\n'
-                Data += '    ========================\n'
+                Data += '    =====================\n'
 
             MessageSet.append([SearchResult['PhoneNum'].values[0], Message.format(SearchResult['NickName'].values[0], Data).split('\n')])
         else:
