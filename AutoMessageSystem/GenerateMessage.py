@@ -177,7 +177,7 @@ def GenerateTutorMessage(MessageFilePath, TutorContactFilePath):
                 Data += f'    課室:{ClassDetail["Room"]}\n'
                 Students = ''
                 for Index, Student in enumerate(ClassDetail['StudentList']):
-                    Students += f'    {Index + 1}.' + Student + '\n'
+                    Students += f'        {Index + 1}.' + Student + '\n'
                 Data += f'    學生列表:\n{Students}\n'
                 Data += '    =====================\n'
 
