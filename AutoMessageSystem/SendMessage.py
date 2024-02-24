@@ -1,3 +1,4 @@
+from io import TextIOBase
 import random
 import string
 import time
@@ -9,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import *
 
 from AutoMessageSystem.GenerateMessage import GenerateStudentMessage
 from selenium.webdriver import ActionChains
@@ -20,7 +22,7 @@ from PyQt5.QtCore import Qt
 BASE_URL = "https://web.whatsapp.com/"
 CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&app_absent=1"
 
-def SendMessage(Data):
+def SendMessage(Data, LogFile: TextIOBase):
 
     # if (not os.path.exists(MessageFilePath)):
     #     QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
@@ -29,6 +31,8 @@ def SendMessage(Data):
     # if (not os.path.exists(ContactFilePath)):
     #     QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
     #     return
+
+    FailedNumber = []
 
     chrome_options = Options()
     chrome_options.add_argument("start-maximized")
@@ -52,8 +56,6 @@ def SendMessage(Data):
         browser.close()
         return 
     
-    
-        
 
     for Phone, Message in Data:
 
@@ -64,21 +66,30 @@ def SendMessage(Data):
         inp_xpath = (
             '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
         )
-        input_box = WebDriverWait(browser, 60).until(
-            expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
-        )
-        # input_box.send_keys(Message)
+        try:
+            input_box = WebDriverWait(browser, 60).until(
+                expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
+            )
+            # input_box.send_keys(Message)
 
-        for Line in Message:
-            input_box.send_keys(Line)
-            ActionChains(browser).key_down(Keys.SHIFT).key_down(Keys.ENTER).perform()
-            ActionChains(browser).key_up(Keys.SHIFT).perform()
-        
-        input_box.send_keys(Keys.ENTER)
+            for Line in Message:
+                input_box.send_keys(Line)
+                ActionChains(browser).key_down(Keys.SHIFT).key_down(Keys.ENTER).perform()
+                ActionChains(browser).key_up(Keys.SHIFT).perform()
+            
+            input_box.send_keys(Keys.ENTER)
 
-        time.sleep(2)
-
+            time.sleep(2)
+        except WebDriverException as e:
+            LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
+            FailedNumber.append(Phone)
+            return 0, FailedNumber
+        except Exception as e:
+            LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
+            FailedNumber.append(Phone)
     browser.close()
+
+    return 1, FailedNumber
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

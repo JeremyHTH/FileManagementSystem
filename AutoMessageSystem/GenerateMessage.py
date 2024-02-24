@@ -218,3 +218,25 @@ def GenerateTutorMessageToFile(MessageFilePath= "", ContactFilePath=""):
         f.write("Not Found: \n")
         for name in NotFoundData:
             f.write(f'{name}\n')
+
+def GetNameByPhoneNumber(PhoneNumList, Path, Mode):
+    OutputMessage = ""
+
+    DataStream = pandas.read_excel(Path, engine='openpyxl')
+
+    for PhoneNum in PhoneNumList:
+        if Mode == 'Student':
+            # Search = re.findall(r'\d+', str(StudentContact_df['首要聯絡人'][Index2]))
+            # PhoneNum1 = Search[0] if len(Search) > 0 else ''
+            # Search = re.findall(r'\d+', str(StudentContact_df['次要聯絡人'][Index2]))
+            # PhoneNum2 = Search[0] if len(Search) > 0 else ''
+            # Search = re.findall(r'\d+', str(StudentContact_df['其他聯絡人(1)'][Index2]))
+            # PhoneNum3 = Search[0] if len(Search) > 0 else ''
+
+            
+        elif Mode == 'Tutor': 
+            try:
+                Name = DataStream.loc[DataStream['PhoneNum'] == PhoneNum, "NickName"].values[0]
+                OutputMessage += f'{Name}\t{PhoneNum}\n'
+            except Exception as e: 
+                pass
