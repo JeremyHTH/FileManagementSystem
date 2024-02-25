@@ -233,10 +233,26 @@ def GetNameByPhoneNumber(PhoneNumList, Path, Mode):
             # Search = re.findall(r'\d+', str(StudentContact_df['其他聯絡人(1)'][Index2]))
             # PhoneNum3 = Search[0] if len(Search) > 0 else ''
 
+            PotentialTarget = ""
+            for Index2, Name in enumerate(DataStream['姓名(中文)']):
+                Search = re.findall(r'\d+', str(DataStream['首要聯絡人'][Index2]))
+                PhoneNum1 = Search[0] if len(Search) > 0 else ''
+                Search = re.findall(r'\d+', str(DataStream['次要聯絡人'][Index2]))
+                PhoneNum2 = Search[0] if len(Search) > 0 else ''
+                Search = re.findall(r'\d+', str(DataStream['其他聯絡人(1)'][Index2]))
+                PhoneNum3 = Search[0] if len(Search) > 0 else ''
+                if (PhoneNum in (PhoneNum1, PhoneNum2, PhoneNum3)):
+                    if (len(PotentialTarget) > 0):
+                        PotentialTarget += f'/{Name}'
+                    else:
+                        PotentialTarget += Name
+
+            if (len(PotentialTarget) > 0):
+                OutputMessage += f'{PotentialTarget}:\t{PhoneNum}'
             
         elif Mode == 'Tutor': 
             try:
                 Name = DataStream.loc[DataStream['PhoneNum'] == PhoneNum, "NickName"].values[0]
-                OutputMessage += f'{Name}\t{PhoneNum}\n'
+                OutputMessage += f'{Name}:\t{PhoneNum}\n'
             except Exception as e: 
                 pass

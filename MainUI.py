@@ -213,6 +213,13 @@ class AutoNotificationSystemWidget(QWidget):
                     return 
                 
             Success, MissedNumber = SendMessage(Data, self.LogFile)
+            if (not Success):
+                QMessageBox.warning(None,"Chrome Error", f"Stopped at {MissedNumber[-1]}", QMessageBox.Ok)
+
+            if (len(MissedNumber) > 0):
+                ErrorMessage = GetNameByPhoneNumber(MissedNumber, self.StudentContactFilePathLineEdit.text(),'Student')
+                QMessageBox.warning(None,"Skipped Target", ErrorMessage, QMessageBox.Ok)
+                
         except Exception as e:
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
 
@@ -235,6 +242,13 @@ class AutoNotificationSystemWidget(QWidget):
                     return 
             
             Success, MissedNumber = SendMessage(Data, self.LogFile)
+
+            if (not Success):
+                QMessageBox.warning(None,"Chrome Error", f"Stopped at {MissedNumber[-1]}", QMessageBox.Ok)
+
+            if (len(MissedNumber) > 0):
+                ErrorMessage = GetNameByPhoneNumber(MissedNumber, self.TutorContactFilePathLineEdit.text(),'Tutor')
+                QMessageBox.warning(None,"Skipped Target", ErrorMessage, QMessageBox.Ok)
         except Exception as e:
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
 
@@ -355,9 +369,10 @@ class MainWindow(QMainWindow):
         return super().close()
 
 if __name__ == '__main__':
-    import ctypes
-    myappid = 'EducationCentre.ControlApp.Ver1.5' 
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    if os.name == 'nt':
+        import ctypes
+        myappid = 'EducationCentre.ControlApp.Ver1.1' 
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     app = QApplication(sys.argv)
     container = MainWindow()
