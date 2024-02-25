@@ -31,7 +31,6 @@ def SendMessage(Data, LogFile: TextIOBase):
     # if (not os.path.exists(ContactFilePath)):
     #     QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
     #     return
-
     FailedNumber = []
 
     chrome_options = Options()
@@ -87,7 +86,10 @@ def SendMessage(Data, LogFile: TextIOBase):
         except Exception as e:
             LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
             FailedNumber.append(Phone)
-    browser.close()
+    try:
+        browser.close()
+    except Exception as e:
+        pass
 
     return FailedNumber
 
