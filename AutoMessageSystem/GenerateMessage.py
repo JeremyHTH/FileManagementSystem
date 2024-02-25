@@ -248,7 +248,7 @@ def GetNameByPhoneNumber(PhoneNumList, Path, Mode):
                         PotentialTarget += Name
 
             if (len(PotentialTarget) > 0):
-                OutputMessage += f'{PotentialTarget}:\t{PhoneNum}'
+                OutputMessage += f'{PotentialTarget}:\t{PhoneNum}\n'
             
         elif Mode == 'Tutor': 
             try:
