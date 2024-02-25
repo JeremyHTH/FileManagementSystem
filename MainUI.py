@@ -212,10 +212,7 @@ class AutoNotificationSystemWidget(QWidget):
                     QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
                     return 
                 
-            Success, MissedNumber = SendMessage(Data, self.LogFile)
-            if (not Success):
-                ErrorMessage = GetNameByPhoneNumber(list(MissedNumber[-1]), self.StudentContactFilePathLineEdit.text(),'Student')
-                QMessageBox.warning(None,"Chrome Error", f"Stopped at {ErrorMessage}", QMessageBox.Ok)
+            MissedNumber = SendMessage(Data, self.LogFile)
 
             if (len(MissedNumber) > 0):
                 ErrorMessage = GetNameByPhoneNumber(MissedNumber, self.StudentContactFilePathLineEdit.text(),'Student')
@@ -242,10 +239,8 @@ class AutoNotificationSystemWidget(QWidget):
                     QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
                     return 
             
-            Success, MissedNumber = SendMessage(Data, self.LogFile)
+            MissedNumber = SendMessage(Data, self.LogFile)
 
-            if (not Success):
-                QMessageBox.warning(None,"Chrome Error", f"Stopped at {MissedNumber[-1]}", QMessageBox.Ok)
 
             if (len(MissedNumber) > 0):
                 ErrorMessage = GetNameByPhoneNumber(MissedNumber, self.TutorContactFilePathLineEdit.text(),'Tutor')

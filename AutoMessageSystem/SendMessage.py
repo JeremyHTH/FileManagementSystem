@@ -31,7 +31,6 @@ def SendMessage(Data, LogFile: TextIOBase):
     # if (not os.path.exists(ContactFilePath)):
     #     QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
     #     return
-    Success = True
 
     FailedNumber = []
 
@@ -84,13 +83,13 @@ def SendMessage(Data, LogFile: TextIOBase):
         except WebDriverException as e:
             LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
             FailedNumber.append(Phone)
-            Success = False
+
         except Exception as e:
             LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
             FailedNumber.append(Phone)
     browser.close()
 
-    return Success, FailedNumber
+    return FailedNumber
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
