@@ -208,13 +208,14 @@ class AutoNotificationSystemWidget(QWidget):
 
             if (not (len(MissedTarget) == 0)):
                 buttonReply = QMessageBox.question(None, 'Automation System', f'{MissedTarget} is not found, proceed anyway?', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) 
-                if (not buttonReply != QMessageBox.Yes):
+                if (not buttonReply == QMessageBox.Yes):
                     QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
                     return 
                 
             Success, MissedNumber = SendMessage(Data, self.LogFile)
             if (not Success):
-                QMessageBox.warning(None,"Chrome Error", f"Stopped at {MissedNumber[-1]}", QMessageBox.Ok)
+                ErrorMessage = GetNameByPhoneNumber(list(MissedNumber[-1]), self.StudentContactFilePathLineEdit.text(),'Student')
+                QMessageBox.warning(None,"Chrome Error", f"Stopped at {ErrorMessage}", QMessageBox.Ok)
 
             if (len(MissedNumber) > 0):
                 ErrorMessage = GetNameByPhoneNumber(MissedNumber, self.StudentContactFilePathLineEdit.text(),'Student')
@@ -237,7 +238,7 @@ class AutoNotificationSystemWidget(QWidget):
             
             if (not (len(MissedTarget) == 0)):
                 buttonReply = QMessageBox.question(None, 'Automation System', f'{MissedTarget} is not found, proceed anyway?', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) 
-                if (not buttonReply != QMessageBox.Yes):
+                if (not buttonReply == QMessageBox.Yes):
                     QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
                     return 
             

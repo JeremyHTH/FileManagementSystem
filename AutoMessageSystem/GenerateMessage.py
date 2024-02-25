@@ -256,3 +256,5 @@ def GetNameByPhoneNumber(PhoneNumList, Path, Mode):
                 OutputMessage += f'{Name}:\t{PhoneNum}\n'
             except Exception as e: 
                 pass
+
+    return OutputMessage
