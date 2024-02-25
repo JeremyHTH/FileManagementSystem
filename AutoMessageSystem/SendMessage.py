@@ -66,7 +66,7 @@ def SendMessage(Data, LogFile: TextIOBase):
             inp_xpath = (
                 '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
             )
-            input_box = WebDriverWait(browser, 60).until(
+            input_box = WebDriverWait(browser, 30).until(
                 expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
             )
             # input_box.send_keys(Message)
