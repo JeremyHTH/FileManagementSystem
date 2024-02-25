@@ -31,6 +31,7 @@ def SendMessage(Data, LogFile: TextIOBase):
     # if (not os.path.exists(ContactFilePath)):
     #     QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
     #     return
+    Success = True
 
     FailedNumber = []
 
@@ -59,14 +60,14 @@ def SendMessage(Data, LogFile: TextIOBase):
 
     for Phone, Message in Data:
 
-        browser.get(CHAT_URL.format(phone=Phone))
-        time.sleep(3)
-
-
-        inp_xpath = (
-            '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
-        )
         try:
+            browser.get(CHAT_URL.format(phone=Phone))
+            time.sleep(3)
+
+
+            inp_xpath = (
+                '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]'
+            )
             input_box = WebDriverWait(browser, 60).until(
                 expected_conditions.presence_of_element_located((By.XPATH, inp_xpath))
             )
@@ -83,13 +84,13 @@ def SendMessage(Data, LogFile: TextIOBase):
         except WebDriverException as e:
             LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
             FailedNumber.append(Phone)
-            return 0, FailedNumber
+            Success = False
         except Exception as e:
             LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
             FailedNumber.append(Phone)
     browser.close()
 
-    return 1, FailedNumber
+    return Success, FailedNumber
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
