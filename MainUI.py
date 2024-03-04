@@ -70,7 +70,7 @@ class ServerControlWidget(QWidget):
             ProcessName = "StartServer.bat"
         else:
             ProcessName += './StartServer.bash'
-        print(ProcessName)
+            
         try:
             self.Handler = subprocess.Popen(ProcessName, stdout = self.OutFile)
         except Exception as e:
@@ -195,21 +195,27 @@ class AutoNotificationSystemWidget(QWidget):
         self.setLayout(self.Layout)
 
     def _SendStudentWhatsappMessage(self):
+        self.LogFile.write(f'{time.ctime()[4:]}\t<Start send student message>\n')
         try:
+
             if (not os.path.exists(self.MessageFilePathLineEdit.text())):
-                QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path", QMessageBox.Ok)
+                QMessageBox.warning(None,"Message file does not Exist", "Please check your selected file path", QMessageBox.Ok)
+                self.LogFile.write(f'{time.ctime()[4:]}\tMessage file does not exist\n')
                 return
             
             if (not os.path.exists(self.StudentContactFilePathLineEdit.text())):
-                QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path", QMessageBox.Ok)
+                QMessageBox.warning(None,"Contact file does not Exist", "Please check your selected file path", QMessageBox.Ok)
+                self.LogFile.write(f'{time.ctime()[4:]}\tStudent contact file does not exist\n')
                 return
             
             Data, MissedTarget = GenerateStudentMessage(self.MessageFilePathLineEdit.text(), self.StudentContactFilePathLineEdit.text())
+            self.LogFile.write(f'{time.ctime()[4:]}\tGenerated student message. MissedTarget{MissedTarget}\n')
 
             if (not (len(MissedTarget) == 0)):
                 buttonReply = QMessageBox.question(None, 'Automation System', f'{MissedTarget} is not found, proceed anyway?', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) 
                 if (not buttonReply == QMessageBox.Yes):
-                    QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
+                    QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok) 
+                    self.LogFile.write(f'{time.ctime()[4:]}\tSend student message cancelled\n')
                     return 
                 
             MissedNumber = SendMessage(Data, self.LogFile)
@@ -219,34 +225,44 @@ class AutoNotificationSystemWidget(QWidget):
                 QMessageBox.warning(None,"Skipped Target", ErrorMessage, QMessageBox.Ok)
                 
         except Exception as e:
-            QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
+            self.LogFile.write(f'{time.ctime()[4:]}\tSend student message failed with error\n{str(e)}\n')
+            QMessageBox.warning(self,"Send student message fail",str(e),QMessageBox.Ok)
+
+        self.LogFile.write(f'{time.ctime()[4:]}\t<End send student message>\n')
 
     def _SendTutorWhatsappMessage(self):
+        self.LogFile.write(f'{time.ctime()[4:]}\t<Start send tutor message>\n')
         try:
             if (not os.path.exists(self.MessageFilePathLineEdit.text())):
                 QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                self.LogFile.write(f'{time.ctime()[4:]}\tMessage file does not exist\n')
                 return
             
             if (not os.path.exists(self.TutorContactFilePathLineEdit.text())):
                 QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
+                self.LogFile.write(f'{time.ctime()[4:]}\tTutor contact file does not exist\n')
                 return
             
             Data, MissedTarget = GenerateTutorMessage(self.MessageFilePathLineEdit.text(), self.TutorContactFilePathLineEdit.text())
-            
+            self.LogFile.write(f'{time.ctime()[4:]}\tGenerated Tutor message. MissedTarget{MissedTarget}\n')
+
             if (not (len(MissedTarget) == 0)):
                 buttonReply = QMessageBox.question(None, 'Automation System', f'{MissedTarget} is not found, proceed anyway?', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) 
                 if (not buttonReply == QMessageBox.Yes):
                     QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
+                    self.LogFile.write(f'{time.ctime()[4:]}\tSend tutor message cancelled\n')
                     return 
             
             MissedNumber = SendMessage(Data, self.LogFile)
-
 
             if (len(MissedNumber) > 0):
                 ErrorMessage = GetNameByPhoneNumber(MissedNumber, self.TutorContactFilePathLineEdit.text(),'Tutor')
                 QMessageBox.warning(None,"Skipped Target", ErrorMessage, QMessageBox.Ok)
         except Exception as e:
+            self.LogFile.write(f'{time.ctime()[4:]}\tSend tutor message failed with error\n{str(e)}\n')
             QMessageBox.warning(self,"Send message fail",str(e),QMessageBox.Ok)
+            
+        self.LogFile.write(f'{time.ctime()[4:]}\t<End send tutor message>\n')
 
 
     def GenerateStudentWhatsappMessageToFile(self):
@@ -308,7 +324,7 @@ class CenterWidget(QWidget):
             os.mkdir("log")
 
         if (not os.path.exists("Student_Data")):
-                    os.mkdir("Student_Data")
+            os.mkdir("Student_Data")
 
         self.InitUI()
         

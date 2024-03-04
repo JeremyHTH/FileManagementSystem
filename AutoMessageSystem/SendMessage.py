@@ -24,13 +24,8 @@ CHAT_URL = "https://web.whatsapp.com/send?phone={phone}&text&type=phone_number&a
 
 def SendMessage(Data, LogFile: TextIOBase):
 
-    # if (not os.path.exists(MessageFilePath)):
-    #     QMessageBox.warning(None,"Message File not Exist", "Please check your selected file path",QMessageBox.Ok)
-    #     return
-    
-    # if (not os.path.exists(ContactFilePath)):
-    #     QMessageBox.warning(None,"Contact File not Exist", "Please check your selected file path",QMessageBox.Ok)
-    #     return
+    LogFile.write(f'{time.ctime()[4:]}\tStart send message\n')
+
     FailedNumber = []
 
     chrome_options = Options()
@@ -42,17 +37,25 @@ def SendMessage(Data, LogFile: TextIOBase):
     try:
         browser = webdriver.Chrome(service = Service(ChromeDriverManager().install()),  options=chrome_options,)
     except:
-        print('2')
         browser = webdriver.Chrome(service=Service(r"C:\ChromeDriver\chrome-win32\chromedriver"),  options=chrome_options,)
 
-    browser.get(BASE_URL)
-    browser.maximize_window()
+    try:
+        browser.get(BASE_URL)
+        browser.maximize_window()
+    except:
+        LogFile.write(f'{time.ctime()[4:]}\tFailed to open browser\n')
+        QMessageBox.warning(None,"Send message", "Failed to open browser", QMessageBox.Ok)
+        return
 
     # Data, NotFoundName = GenerateStudentMessage(MessageFilePath, ContactFilePath)
     buttonReply = QMessageBox.question(None, 'Automation System', 'Press Yes if you have logged in to Whatsapp.', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel) #.setWindowFlags(QMessageBox().windowFlags() | Qt.WindowStaysOnTopHint)
     if (not buttonReply == QMessageBox.Yes):
         QMessageBox.information(None,"Send Message","Cancelled",QMessageBox.Ok)
-        browser.close()
+        LogFile.write(f'{time.ctime()[4:]}\tLog in failed\n')
+        try:
+            browser.close()
+        except:
+            pass
         return 
     
 
@@ -79,12 +82,14 @@ def SendMessage(Data, LogFile: TextIOBase):
             input_box.send_keys(Keys.ENTER)
 
             time.sleep(2)
-        except WebDriverException as e:
-            LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
-            FailedNumber.append(Phone)
+
+            LogFile.write(f'{time.ctime()[4:]} {Phone} Send Success.\n')
+        # except WebDriverException as e:
+        #     LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed.\n{str(e)}')
+        #     FailedNumber.append(Phone)
 
         except Exception as e:
-            LogFile.write(f'{time.ctime()[3:]} {Phone} Send failed {str(e)}')
+            LogFile.write(f'{time.ctime()[4:]} {Phone} Send failed.\n{str(e)}')
             FailedNumber.append(Phone)
     try:
         browser.close()
